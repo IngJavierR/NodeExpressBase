@@ -2,12 +2,31 @@ const User = require('../model/userModel');
 
 exports.getUsers = (query) => {
     return new Promise((resolve, reject) => {
-        User.find(query, (err, result) => {
+
+        User.aggregate([
+            {
+              '$match': {
+                'age': {
+                  '$gte': 100000
+                }
+              }
+            }, {
+              '$limit': 5
+            }
+          ], (err, result) => {
             if(err) {
                 reject(err);
             }
             resolve(result);
         });
+
+        // let queryCustom = {age: {$gte: 10000}};
+        // User.find(queryCustom, (err, result) => {
+        //     if(err) {
+        //         reject(err);
+        //     }
+        //     resolve(result);
+        // });
     });
 }
 
@@ -43,5 +62,27 @@ exports.updateUser = (user) => {
             }
             resolve();
         })
+    });
+}
+
+exports.saveManyUsers = () => {
+    return new Promise((resolve, reject) => {
+        let users = createRandomUsers();
+        User.insertMany(users, (err) => {
+            if(err) {
+                reject(err);
+            }
+            resolve();
+        })
+    });
+}
+
+const createRandomUsers = () => {
+    return [...Array(100).keys()].map(x => {
+        return {
+            user: `USER_${x}`,
+            name: `Axity${x}`,
+            age: x
+        };
     });
 }

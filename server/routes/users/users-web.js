@@ -40,3 +40,13 @@ exports.updateUser = async (req, res) => {
         return res.sendStatus(401);
     }
 }
+
+exports.createManyUsers = async (req, res) => {
+    try {
+        await userService.saveManyUsers();
+        return res.sendStatus(200);
+    }catch(err) {
+        debug(err);
+        return res.sendStatus(401);
+    }
+}
